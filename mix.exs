@@ -14,7 +14,7 @@ defmodule MsLegis.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :httpotion, :sweetxml]]
+    [applications: [:logger, :httpotion, :sweet_xml]]
   end
 
   # Dependencies can be Hex packages:
