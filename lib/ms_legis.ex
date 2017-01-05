@@ -7,8 +7,18 @@ defmodule MsLegis do
     response = HTTPotion.get house_url
     xml = response.body |> clean_xml
 
-    chairman_name = xml |> xpath(~x"//CHAIR_NAME/text()")
-    IO.puts chairman_name
+    chair_link = xml |> xpath(~x"//CHAIR_LINK/text()")
+    protemp_link = xml |> xpath(~x"//PROTEMP_LINK/text()")
+
+    officer_links = [chair_link, protemp_link]
+
+    m1_links = xml |> xpath(~x"//MEMBER/M1_LINK/text()"l)
+    m2_links = xml |> xpath(~x"//MEMBER/M2_LINK/text()"l)
+    m3_links = xml |> xpath(~x"//MEMBER/M3_LINK/text()"l)
+    m4_links = xml |> xpath(~x"//MEMBER/M4_LINK/text()"l)
+    m5_links = xml |> xpath(~x"//MEMBER/M5_LINK/text()"l)
+
+    links_list = officer_links ++ m1_links ++ m2_links ++ m3_links ++ m4_links ++ m5_links
 
     IO.puts "--- Finished ---"
   end
