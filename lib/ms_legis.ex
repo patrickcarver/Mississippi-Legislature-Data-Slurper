@@ -4,12 +4,25 @@ defmodule MsLegis do
   def run do
     IO.puts "--- Started ---"
 
-    house_url = "http://billstatus.ls.state.ms.us/members/hr_membs.xml"
+    base_url = "http://billstatus.ls.state.ms.us/members/"
+
+    house_url = base_url <> "hr_membs.xml"
     response = HTTPotion.get house_url
     links_list = response.body |> clean_xml |> create_list
 
+    for link <- links_list do
+      get_member_xml(base_url <> link)
+    end
+
     IO.puts "--- Finished ---"
   end
+
+  def get_member_xml(link_url) do
+    response = HTTPotion.get link_url
+    response.body |> clean_member_xml
+  end
+
+
 
   def create_list(xml) do
     chair_link = xml |> xpath(~x"//CHAIR_LINK/text()")
@@ -24,6 +37,10 @@ defmodule MsLegis do
     m5_links = xml |> xpath(~x"//MEMBER/M5_LINK/text()"l)
 
     officer_links ++ m1_links ++ m2_links ++ m3_links ++ m4_links ++ m5_links
+  end
+
+  defp clean_member_xml(text) do
+    
   end
 
   defp clean_xml(text) do
