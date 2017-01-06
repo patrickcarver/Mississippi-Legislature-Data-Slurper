@@ -8,10 +8,12 @@ defmodule MsLegis do
 
     house_url = base_url <> "hr_membs.xml"
     response = HTTPotion.get house_url
-    links_list = response.body |> clean_xml |> create_list
+
+    links_list = response.body |> clean_list_xml |> create_list
 
     for link <- links_list do
-      get_member_xml(base_url <> link)
+      member_link = base_url <> List.to_string(link)
+      get_member_xml(member_link)
     end
 
     IO.puts "--- Finished ---"
@@ -19,7 +21,7 @@ defmodule MsLegis do
 
   def get_member_xml(link_url) do
     response = HTTPotion.get link_url
-    response.body |> clean_member_xml
+    IO.puts response.body |> clean_member_xml |> xpath(~x"//PARTY/text()")
   end
 
 
@@ -39,16 +41,26 @@ defmodule MsLegis do
     officer_links ++ m1_links ++ m2_links ++ m3_links ++ m4_links ++ m5_links
   end
 
-  defp clean_member_xml(text) do
-    
-  end
 
-  defp clean_xml(text) do
+
+  defp clean_list_xml(text) do
     xml_top = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><?xml-stylesheet type=\"text/xsl\" href=\"dtds_xslts/memberlist.xslt\"?> <!DOCTYPE LEGISLATURE SYSTEM \"dtds_xslts/memberlist.dtd\"> "
     text
-      |> String.replace("\r", "")
-      |> String.replace("\n", "")
-      |> String.replace("\t", "")
-      |> String.replace(xml_top, "")
+    |> remove_whitespace
+    |> String.replace(xml_top, "")
+  end
+
+  defp clean_member_xml(text) do
+    xml_top = ~s(<?xml version="1.0" encoding="ISO-8859-1"?><?xml-stylesheet type="text/xsl" href="../dtds_xslts/house.xslt"?><!DOCTYPE MEMBINFO SYSTEM "../dtds_xslts/membinfo.dtd">)
+    text
+    |> remove_whitespace
+    |> String.replace(xml_top, "")
+  end
+
+  defp remove_whitespace(text) do
+    text
+    |> String.replace("\r", "")
+    |> String.replace("\n", "")
+    |> String.replace("\t", "")
   end
 end
