@@ -34,7 +34,8 @@ defmodule MsLegis do
 
     for link <- links_list do
       member_link = base_url <> List.to_string(link)
-      get_member_xml(member_link, xml_metadata.member)
+      response = HTTPotion.get link_url
+      IO.puts process_member_xml(response.body, xml_metadata.member)
     end
 
     IO.puts "--- Finished ---"
@@ -46,11 +47,10 @@ defmodule MsLegis do
     |> create_list
   end
 
-  def get_member_xml(link_url, metadata) do
-    response = HTTPotion.get link_url
-    IO.puts response.body
-            |> CleanXml.apply(metadata)
-            |> xpath(~x"//PARTY/text()")
+  def process_member_xml(body, metadata) do
+    body
+    |> CleanXml.apply(metadata)
+    |> xpath(~x"//PARTY/text()")
   end
 
   def create_list(xml) do
