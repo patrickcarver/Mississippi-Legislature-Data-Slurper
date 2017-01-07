@@ -32,13 +32,17 @@ defmodule MsLegis do
     response = HTTPotion.get house_url
     links_list = response.body |> get_list_xml(xml_metadata.list)
 
-    for link <- links_list do
-      member_link = base_url <> List.to_string(link)
-      response = HTTPotion.get member_link
-      IO.puts process_member_xml(response.body, xml_metadata.member)
-    end
+    process_list(links_list, base_url, xml_metadata.member)
 
     IO.puts "--- Finished ---"
+  end
+
+  def process_list(list, base_url, metadata) do
+    for link <- list do
+      member_link = base_url <> List.to_string(link)
+      response = HTTPotion.get member_link
+      IO.puts process_member_xml(response.body, metadata)
+    end
   end
 
   def get_list_xml(body, metadata) do
