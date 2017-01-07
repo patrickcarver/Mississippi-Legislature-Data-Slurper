@@ -34,7 +34,7 @@ defmodule MsLegis do
 
     for link <- links_list do
       member_link = base_url <> List.to_string(link)
-      response = HTTPotion.get link_url
+      response = HTTPotion.get member_link
       IO.puts process_member_xml(response.body, xml_metadata.member)
     end
 
@@ -67,7 +67,4 @@ defmodule MsLegis do
 
     officer_links ++ m1_links ++ m2_links ++ m3_links ++ m4_links ++ m5_links
   end
-
-
-
 end
