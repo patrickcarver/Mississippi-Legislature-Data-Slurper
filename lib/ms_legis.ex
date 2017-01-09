@@ -68,14 +68,14 @@ defmodule MsLegis do
     |> xpath(~x"//PARTY/text()"s)
   end
 
-  defmodule GetLinks do
+  defmodule GetXQueryResult do
     import SweetXml
 
-    def get_officer_link(xml, query) do
+    def get_text(xml, query) do
       xml |> xpath(sigil_x(query, "s"))
     end
 
-    def get_member_links(xml, query) do
+    def get_list(xml, query) do
       xml
       |> xpath(sigil_x(query), "l")
       |> Enum.map(fn(x) -> List.to_string(x) end)
@@ -86,16 +86,16 @@ defmodule MsLegis do
   def create_list(xml) do
     xquery = %XQuery{}
 
-    chair_link =   xml |> xpath(sigil_x(xquery.chair_link, "s"))
-    protemp_link = xml |> xpath(sigil_x(xquery.protemp_link, "s"))
+    chair_link =   xml |> GetXQueryResult.get_text(xquery.chair_link)
+    protemp_link = xml |> GetXQueryResult.get_text(xquery.protemp_link)
 
     officer_links = [chair_link, protemp_link]
 
-    m1_links = xml |> xpath(sigil_x(xquery.m1_links, "l")) |> Enum.map(fn(x) -> List.to_string(x) end)
-    m2_links = xml |> xpath(sigil_x(xquery.m2_links, "l")) |> Enum.map(fn(x) -> List.to_string(x) end)
-    m3_links = xml |> xpath(sigil_x(xquery.m3_links, "l")) |> Enum.map(fn(x) -> List.to_string(x) end)
-    m4_links = xml |> xpath(sigil_x(xquery.m4_links, "l")) |> Enum.map(fn(x) -> List.to_string(x) end)
-    m5_links = xml |> xpath(sigil_x(xquery.m5_links, "l")) |> Enum.map(fn(x) -> List.to_string(x) end)
+    m1_links = xml |> GetXQueryResult.get_list(xquery.m1_links)
+    m2_links = xml |> GetXQueryResult.get_list(xquery.m2_links)
+    m3_links = xml |> GetXQueryResult.get_list(xquery.m3_links)
+    m4_links = xml |> GetXQueryResult.get_list(xquery.m4_links)
+    m5_links = xml |> GetXQueryResult.get_list(xquery.m5_links)
 
     officer_links ++ m1_links ++ m2_links ++ m3_links ++ m4_links ++ m5_links
   end
