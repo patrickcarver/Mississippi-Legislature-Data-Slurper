@@ -39,7 +39,7 @@ defmodule MsLegis do
 
   def process_list(list, base_url, metadata) do
     for link <- list do
-      member_link = base_url <> List.to_string(link)
+      member_link = base_url <> link
       response = HTTPotion.get member_link
       IO.puts process_member_xml(response.body, metadata)
     end
@@ -54,20 +54,22 @@ defmodule MsLegis do
   def process_member_xml(body, metadata) do
     body
     |> CleanXml.apply(metadata)
-    |> xpath(~x"//PARTY/text()")
+    |> xpath(~x"//PARTY/text()"s)
   end
 
+
+
   def create_list(xml) do
-    chair_link = xml |> xpath(~x"//CHAIR_LINK/text()")
-    protemp_link = xml |> xpath(~x"//PROTEMP_LINK/text()")
+    chair_link = xml |> xpath(~x"//CHAIR_LINK/text()"s)
+    protemp_link = xml |> xpath(~x"//PROTEMP_LINK/text()"s)
 
     officer_links = [chair_link, protemp_link]
 
-    m1_links = xml |> xpath(~x"//MEMBER/M1_LINK/text()"l)
-    m2_links = xml |> xpath(~x"//MEMBER/M2_LINK/text()"l)
-    m3_links = xml |> xpath(~x"//MEMBER/M3_LINK/text()"l)
-    m4_links = xml |> xpath(~x"//MEMBER/M4_LINK/text()"l)
-    m5_links = xml |> xpath(~x"//MEMBER/M5_LINK/text()"l)
+    m1_links = xml |> xpath(~x"//MEMBER/M1_LINK/text()"l) |> Enum.map(fn(x) -> List.to_string(x) end)
+    m2_links = xml |> xpath(~x"//MEMBER/M2_LINK/text()"l) |> Enum.map(fn(x) -> List.to_string(x) end)
+    m3_links = xml |> xpath(~x"//MEMBER/M3_LINK/text()"l) |> Enum.map(fn(x) -> List.to_string(x) end)
+    m4_links = xml |> xpath(~x"//MEMBER/M4_LINK/text()"l) |> Enum.map(fn(x) -> List.to_string(x) end)
+    m5_links = xml |> xpath(~x"//MEMBER/M5_LINK/text()"l) |> Enum.map(fn(x) -> List.to_string(x) end)
 
     officer_links ++ m1_links ++ m2_links ++ m3_links ++ m4_links ++ m5_links
   end
