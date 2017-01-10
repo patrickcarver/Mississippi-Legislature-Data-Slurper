@@ -52,7 +52,7 @@ defmodule MsLegis do
     for link <- list do
       member_link = base_url <> link
       response = HTTPotion.get member_link
-      IO.puts process_member_xml(response.body, metadata)
+      process_member_xml(response.body, metadata)
     end
   end
 
@@ -63,9 +63,9 @@ defmodule MsLegis do
   end
 
   def process_member_xml(body, metadata) do
-    body
-    |> CleanXml.apply(metadata)
-    |> xpath(~x"//PARTY/text()"s)
+    xml = body |> CleanXml.apply(metadata)
+
+    # xpath(~x"//PARTY/text()"s)
   end
 
   defmodule GetXQueryResult do
