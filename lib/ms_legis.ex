@@ -6,6 +6,16 @@ defmodule MsLegis do
               member: ~s(<?xml version="1.0" encoding="ISO-8859-1"?><?xml-stylesheet type="text/xsl" href="../dtds_xslts/house.xslt"?><!DOCTYPE MEMBINFO SYSTEM "../dtds_xslts/membinfo.dtd">)
   end
 
+  defmodule XQuery do
+    defstruct chair_link:    "//CHAIR_LINK/text()",
+              protemp_link:  "//PROTEMP_LINK/text()",
+              m1_links:      "//MEMBER/M1_LINK/text()",
+              m2_links:      "//MEMBER/M2_LINK/text()",
+              m3_links:      "//MEMBER/M3_LINK/text()",
+              m4_links:      "//MEMBER/M4_LINK/text()",
+              m5_links:      "//MEMBER/M5_LINK/text()"
+  end
+
   defmodule CleanXml do
     def apply(text, metadata) do
       text
@@ -20,6 +30,7 @@ defmodule MsLegis do
       |> String.replace("\t", "")
     end
   end
+
 
   def run do
     IO.puts "--- Started ---"
@@ -57,19 +68,34 @@ defmodule MsLegis do
     |> xpath(~x"//PARTY/text()"s)
   end
 
+  defmodule GetXQueryResult do
+    import SweetXml
+
+    def get_text(xml, query) do
+      xml |> xpath(sigil_x(query, "s"))
+    end
+
+    def get_list(xml, query) do
+      xml
+      |> xpath(sigil_x(query), "l")
+      |> Enum.map(fn(x) -> List.to_string(x) end)
+    end
+  end
 
 
   def create_list(xml) do
-    chair_link = xml |> xpath(~x"//CHAIR_LINK/text()"s)
-    protemp_link = xml |> xpath(~x"//PROTEMP_LINK/text()"s)
+    xquery = %XQuery{}
+
+    chair_link =   xml |> GetXQueryResult.get_text(xquery.chair_link)
+    protemp_link = xml |> GetXQueryResult.get_text(xquery.protemp_link)
 
     officer_links = [chair_link, protemp_link]
 
-    m1_links = xml |> xpath(~x"//MEMBER/M1_LINK/text()"l) |> Enum.map(fn(x) -> List.to_string(x) end)
-    m2_links = xml |> xpath(~x"//MEMBER/M2_LINK/text()"l) |> Enum.map(fn(x) -> List.to_string(x) end)
-    m3_links = xml |> xpath(~x"//MEMBER/M3_LINK/text()"l) |> Enum.map(fn(x) -> List.to_string(x) end)
-    m4_links = xml |> xpath(~x"//MEMBER/M4_LINK/text()"l) |> Enum.map(fn(x) -> List.to_string(x) end)
-    m5_links = xml |> xpath(~x"//MEMBER/M5_LINK/text()"l) |> Enum.map(fn(x) -> List.to_string(x) end)
+    m1_links = xml |> GetXQueryResult.get_list(xquery.m1_links)
+    m2_links = xml |> GetXQueryResult.get_list(xquery.m2_links)
+    m3_links = xml |> GetXQueryResult.get_list(xquery.m3_links)
+    m4_links = xml |> GetXQueryResult.get_list(xquery.m4_links)
+    m5_links = xml |> GetXQueryResult.get_list(xquery.m5_links)
 
     officer_links ++ m1_links ++ m2_links ++ m3_links ++ m4_links ++ m5_links
   end
