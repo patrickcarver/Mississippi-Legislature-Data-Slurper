@@ -31,6 +31,20 @@ defmodule MsLegis do
     end
   end
 
+  defmodule GetXQueryResult do
+    import SweetXml
+
+    def get_text(xml, query) do
+      xml |> xpath(sigil_x(query, 's'))
+    end
+
+    def get_list(xml, query) do
+      xml
+      |> xpath(sigil_x(query, 'l'))
+      |> Enum.map(fn(x) -> List.to_string(x) end)
+    end
+  end
+
 
   def run do
     IO.puts "--- Started ---"
@@ -65,22 +79,17 @@ defmodule MsLegis do
   def process_member_xml(body, metadata) do
     xml = body |> CleanXml.apply(metadata)
 
-    # xpath(~x"//PARTY/text()"s)
+    district =    xml |> SweetXml.xpath(~x"//DISTRICT/text()"s)
+    name =        xml |> SweetXml.xpath(~x"//DISP_NAME/text()"s)
+    thumbnail =   xml |> SweetXml.xpath(~x"//IMG_NAME/text()"s)
+    party =       xml |> SweetXml.xpath(~x"//PARTY/text()"s)
+    email =       xml |> SweetXml.xpath(~x"//EMAIL_ADDRESS/text()"s)
+
+    IO.puts name
+
   end
 
-  defmodule GetXQueryResult do
-    import SweetXml
 
-    def get_text(xml, query) do
-      xml |> xpath(sigil_x(query, "s"))
-    end
-
-    def get_list(xml, query) do
-      xml
-      |> xpath(sigil_x(query), "l")
-      |> Enum.map(fn(x) -> List.to_string(x) end)
-    end
-  end
 
 
   def create_list(xml) do
