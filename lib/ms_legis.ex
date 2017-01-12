@@ -39,9 +39,7 @@ defmodule MsLegis do
     end
 
     def get_list(xml, query) do
-      xml
-      |> xpath(sigil_x(query, 'l'))
-      |> Enum.map(fn(x) -> List.to_string(x) end)
+      xml |> xpath(sigil_x(query, 'sl'))
     end
   end
 
@@ -66,6 +64,9 @@ defmodule MsLegis do
     for link <- list do
       member_link = base_url <> link
       response = HTTPotion.get member_link
+
+      IO.puts link
+
       process_member_xml(response.body, metadata)
     end
   end
