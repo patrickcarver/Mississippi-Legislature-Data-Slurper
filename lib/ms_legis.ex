@@ -29,6 +29,12 @@ defmodule MsLegis do
       |> String.replace("\n", "")
       |> String.replace("\t", "")
     end
+
+    def remove_bad_quotes(text) do
+      text
+      |> String.replace(<<147>>, "")
+      |> String.replace(<<148>>, "")
+    end
   end
 
   defmodule GetXQueryResult do
@@ -54,7 +60,6 @@ defmodule MsLegis do
 
     response = HTTPotion.get house_url
     links_list = response.body |> get_list_xml(xml_metadata.list)
-
     process_list(links_list, base_url, xml_metadata.member)
 
     IO.puts "--- Finished ---"
@@ -63,15 +68,8 @@ defmodule MsLegis do
   def process_list(list, base_url, metadata) do
     for link <- list do
       member_link = base_url <> link
-
-      unless link == "house/mims.xml" do
-
-        response = HTTPotion.get member_link
-
-        IO.puts link
-
-        process_member_xml(response.body, metadata)
-      end
+      response = HTTPotion.get member_link
+      process_member_xml(response.body, metadata)
     end
   end
 
@@ -82,7 +80,9 @@ defmodule MsLegis do
   end
 
   def process_member_xml(body, metadata) do
-    xml = body |> CleanXml.apply(metadata)
+    xml = body
+          |> CleanXml.remove_bad_quotes
+          |> CleanXml.apply(metadata)
 
     district =    xml |> SweetXml.xpath(~x"//DISTRICT/text()"s)
     name =        xml |> SweetXml.xpath(~x"//DISP_NAME/text()"s)
@@ -90,9 +90,6 @@ defmodule MsLegis do
     party =       xml |> SweetXml.xpath(~x"//PARTY/text()"s)
     email =       xml |> SweetXml.xpath(~x"//EMAIL_ADDRESS/text()"s)
   end
-
-
-
 
   def create_list(xml) do
     xquery = %XQuery{}
