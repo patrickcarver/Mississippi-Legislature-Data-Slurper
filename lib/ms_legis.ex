@@ -59,8 +59,9 @@ defmodule MsLegis do
     house_url = base_url <> "hr_membs.xml"
 
     response = HTTPotion.get house_url
-    links_list = response.body |> get_list_xml(xml_metadata.list)
-    process_list(links_list, base_url, xml_metadata.member)
+    response.body
+    |> get_list_xml(xml_metadata.list)
+    |> process_list(base_url, xml_metadata.member)
 
     IO.puts "--- Finished ---"
   end
