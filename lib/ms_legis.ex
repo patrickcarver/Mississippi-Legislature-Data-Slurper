@@ -63,11 +63,15 @@ defmodule MsLegis do
   def process_list(list, base_url, metadata) do
     for link <- list do
       member_link = base_url <> link
-      response = HTTPotion.get member_link
 
-      IO.puts link
+      unless link == "house/mims.xml" do
 
-      process_member_xml(response.body, metadata)
+        response = HTTPotion.get member_link
+
+        IO.puts link
+
+        process_member_xml(response.body, metadata)
+      end
     end
   end
 
@@ -85,9 +89,6 @@ defmodule MsLegis do
     thumbnail =   xml |> SweetXml.xpath(~x"//IMG_NAME/text()"s)
     party =       xml |> SweetXml.xpath(~x"//PARTY/text()"s)
     email =       xml |> SweetXml.xpath(~x"//EMAIL_ADDRESS/text()"s)
-
-    IO.puts name
-
   end
 
 
