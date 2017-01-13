@@ -73,9 +73,8 @@ defmodule MsLegis do
 
   def process_list(list, base_url, metadata) do
     for link <- list do
-      member_link = base_url <> link
-      response = HTTPotion.get member_link
-      process_member_xml(response.body, metadata)
+      GetXmlFromUrl(base_url <> link)
+      |> process_member_xml(metadata)
     end
   end
 
