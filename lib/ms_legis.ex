@@ -49,6 +49,12 @@ defmodule MsLegis do
     end
   end
 
+  defmodule GetXmlFromUrl do
+    def apply(url) do
+      response = HTTPotion.get(url)
+      response.body
+    end
+  end
 
   def run do
     IO.puts "--- Started ---"
@@ -58,8 +64,7 @@ defmodule MsLegis do
     base_url = "http://billstatus.ls.state.ms.us/members/"
     house_url = base_url <> "hr_membs.xml"
 
-    response = HTTPotion.get house_url
-    response.body
+    GetXmlFromUrl.apply(house_url)
     |> get_list_xml(xml_metadata.list)
     |> process_list(base_url, xml_metadata.member)
 
