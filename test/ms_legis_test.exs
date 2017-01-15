@@ -5,7 +5,9 @@ defmodule MsLegisTest do
 
 
   test "test chair link" do
+    import MsLegis.XQuery
+
     xquery = %MsLegis.XQuery{}
-    assert xquery.chair_link = "//CHAIR_LINK/text()"
+    assert xquery.chair_link == "//CHAIR_LINK/text()"
   end
 end
