@@ -56,17 +56,32 @@ defmodule MsLegis do
     end
   end
 
+  defmodule Urls do
+     @base "http://billstatus.ls.state.ms.us/members/"
+     @house "hr_membs.xml"
+     @senate ""
+
+     def house_link do
+       @base <> @house
+     end
+
+     def senate_link do
+       @base <> @senate
+     end
+
+     def base_link do
+       @base
+     end
+  end
+
   def run do
     IO.puts "--- Started ---"
 
     xml_metadata = %XmlMetadata{}
 
-    base_url = "http://billstatus.ls.state.ms.us/members/"
-    house_url = base_url <> "hr_membs.xml"
-
-    GetXmlFromUrl.apply(house_url)
+    GetXmlFromUrl.apply(Urls.house_link)
     |> get_list_xml(xml_metadata.list)
-    |> process_list(base_url, xml_metadata.member)
+    |> process_list(Urls.base_link, xml_metadata.member)
 
     IO.puts "--- Finished ---"
   end
