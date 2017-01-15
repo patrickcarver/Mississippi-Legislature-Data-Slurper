@@ -27,4 +27,13 @@ defmodule MsLegisTest do
     assert cleaned == "Hello World"
   end
 
+  test "test remove bad quotes", state do
+    original = <<147>> <> "Hello World" <> <<148>>
+    cleaned = MsLegis.CleanXml.remove_bad_quotes(original)
+
+    assert cleaned == "Hello World"
+  end
+
+
+
 end
