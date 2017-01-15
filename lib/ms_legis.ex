@@ -73,7 +73,7 @@ defmodule MsLegis do
 
   def process_list(list, base_url, metadata) do
     for link <- list do
-      GetXmlFromUrl(base_url <> link)
+      GetXmlFromUrl.apply(base_url <> link)
       |> process_member_xml(metadata)
     end
   end
