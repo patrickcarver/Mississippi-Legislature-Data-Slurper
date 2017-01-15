@@ -2,18 +2,39 @@ defmodule MsLegis do
   import SweetXml
 
   defmodule XmlMetadata do
-    defstruct list:   ~s(<?xml version="1.0" encoding="ISO-8859-1"?><?xml-stylesheet type="text/xsl" href="dtds_xslts/memberlist.xslt"?> <!DOCTYPE LEGISLATURE SYSTEM "dtds_xslts/memberlist.dtd">),
-              member: ~s(<?xml version="1.0" encoding="ISO-8859-1"?><?xml-stylesheet type="text/xsl" href="../dtds_xslts/house.xslt"?><!DOCTYPE MEMBINFO SYSTEM "../dtds_xslts/membinfo.dtd">)
+    @list   ~s(<?xml version="1.0" encoding="ISO-8859-1"?><?xml-stylesheet type="text/xsl" href="dtds_xslts/memberlist.xslt"?> <!DOCTYPE LEGISLATURE SYSTEM "dtds_xslts/memberlist.dtd">)
+    @member ~s(<?xml version="1.0" encoding="ISO-8859-1"?><?xml-stylesheet type="text/xsl" href="../dtds_xslts/house.xslt"?><!DOCTYPE MEMBINFO SYSTEM "../dtds_xslts/membinfo.dtd">)
+
+    def list, do: @list
+    def member, do: @member
   end
 
   defmodule XQuery do
-    defstruct chair_link:    "//CHAIR_LINK/text()",
-              protemp_link:  "//PROTEMP_LINK/text()",
-              m1_links:      "//MEMBER/M1_LINK/text()",
-              m2_links:      "//MEMBER/M2_LINK/text()",
-              m3_links:      "//MEMBER/M3_LINK/text()",
-              m4_links:      "//MEMBER/M4_LINK/text()",
-              m5_links:      "//MEMBER/M5_LINK/text()"
+    @chair_link   "//CHAIR_LINK/text()"
+    @protemp_link "//PROTEMP_LINK/text()"
+    @m1_links     "//MEMBER/M1_LINK/text()"
+    @m2_links     "//MEMBER/M2_LINK/text()"
+    @m3_links     "//MEMBER/M3_LINK/text()"
+    @m4_links     "//MEMBER/M4_LINK/text()"
+    @m5_links     "//MEMBER/M5_LINK/text()"
+
+    def chair_link, do: @chair_link
+    def protemp_link, do: @protemp_link
+    def m1_links, do: @m1_links
+    def m2_links, do: @m2_links
+    def m3_links, do: @m3_links
+    def m4_links, do: @m4_links
+    def m5_links, do: @m5_links
+  end
+
+  defmodule Urls do
+     @base "http://billstatus.ls.state.ms.us/members/"
+     @house "hr_membs.xml"
+     @senate ""
+
+     def house_link, do: @base <> @house
+     def senate_link, do: @base <> @senate
+     def base_link, do: @base
   end
 
   defmodule CleanXml do
@@ -56,32 +77,12 @@ defmodule MsLegis do
     end
   end
 
-  defmodule Urls do
-     @base "http://billstatus.ls.state.ms.us/members/"
-     @house "hr_membs.xml"
-     @senate ""
-
-     def house_link do
-       @base <> @house
-     end
-
-     def senate_link do
-       @base <> @senate
-     end
-
-     def base_link do
-       @base
-     end
-  end
-
   def run do
     IO.puts "--- Started ---"
 
-    xml_metadata = %XmlMetadata{}
-
     GetXmlFromUrl.apply(Urls.house_link)
-    |> get_list_xml(xml_metadata.list)
-    |> process_list(Urls.base_link, xml_metadata.member)
+    |> get_list_xml(XmlMetadata.list)
+    |> process_list(Urls.base_link, XmlMetadata.member)
 
     IO.puts "--- Finished ---"
   end
@@ -112,18 +113,16 @@ defmodule MsLegis do
   end
 
   def create_list(xml) do
-    xquery = %XQuery{}
-
-    chair_link =   xml |> GetXQueryResult.get_text(xquery.chair_link)
-    protemp_link = xml |> GetXQueryResult.get_text(xquery.protemp_link)
+    chair_link =   xml |> GetXQueryResult.get_text(XQuery.chair_link)
+    protemp_link = xml |> GetXQueryResult.get_text(XQuery.protemp_link)
 
     officer_links = [chair_link, protemp_link]
 
-    m1_links = xml |> GetXQueryResult.get_list(xquery.m1_links)
-    m2_links = xml |> GetXQueryResult.get_list(xquery.m2_links)
-    m3_links = xml |> GetXQueryResult.get_list(xquery.m3_links)
-    m4_links = xml |> GetXQueryResult.get_list(xquery.m4_links)
-    m5_links = xml |> GetXQueryResult.get_list(xquery.m5_links)
+    m1_links = xml |> GetXQueryResult.get_list(XQuery.m1_links)
+    m2_links = xml |> GetXQueryResult.get_list(XQuery.m2_links)
+    m3_links = xml |> GetXQueryResult.get_list(XQuery.m3_links)
+    m4_links = xml |> GetXQueryResult.get_list(XQuery.m4_links)
+    m5_links = xml |> GetXQueryResult.get_list(XQuery.m5_links)
 
     officer_links ++ m1_links ++ m2_links ++ m3_links ++ m4_links ++ m5_links
   end

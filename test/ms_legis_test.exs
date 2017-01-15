@@ -6,9 +6,7 @@ defmodule MsLegisTest do
 
   setup_all do
 
-    {:ok, [
-      metadata: %MsLegis.XmlMetadata{}
-      ]}
+    {:ok, []}
   end
 
   test "remove white space" do
@@ -25,11 +23,9 @@ defmodule MsLegisTest do
     assert cleaned == "Hello World"
   end
 
-  test "retrieve 122 house member links", state do
-    metadata_to_remove = state[:metadata].list
-
+  test "retrieve 122 house member links" do
     list = MsLegis.GetXmlFromUrl.apply(MsLegis.Urls.house_link)
-            |> MsLegis.get_list_xml(metadata_to_remove)
+            |> MsLegis.get_list_xml(MsLegis.XmlMetadata.list)
 
     assert Enum.count(list) == 122
   end
