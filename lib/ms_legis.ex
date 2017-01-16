@@ -1,7 +1,14 @@
 defmodule MsLegis do
+  @@moduledoc """
+  Processes member roster xml from MS Legislature
+  """
+
   import SweetXml
   alias MsLegis.{CleanXml, GetXmlFromUrl, GetXQueryResult, Urls, XmlMetadata, XQuery}
 
+  @doc """
+  Main function
+  """
   def run do
     IO.puts "--- Started ---"
 
@@ -12,6 +19,9 @@ defmodule MsLegis do
     IO.puts "--- Finished ---"
   end
 
+  @doc """
+  Gets xml from each member xml page and processes data
+  """
   def process_list(list, base_url, metadata) do
     for link <- list do
       GetXmlFromUrl.apply(base_url <> link)
@@ -19,12 +29,18 @@ defmodule MsLegis do
     end
   end
 
+  @doc """
+  Removes xml metadata and returns string list of member xml pages
+  """
   def get_list_xml(body, metadata) do
     body
     |> CleanXml.apply(metadata)
     |> create_list
   end
 
+  @doc """
+  Parses xml from member xml page
+  """
   def process_member_xml(body, metadata) do
     xml = body
           |> CleanXml.remove_bad_quotes
@@ -39,6 +55,9 @@ defmodule MsLegis do
     IO.puts "#{district} | #{name} | #{party}"
   end
 
+  @doc """
+  Returns string list of member xml pages
+  """
   def create_list(xml) do
     chair_link =   xml |> GetXQueryResult.get_text(XQuery.chair_link)
     protemp_link = xml |> GetXQueryResult.get_text(XQuery.protemp_link)
