@@ -4,9 +4,7 @@ defmodule MsLegisTest do
 
   alias MsLegis.{CleanXml, GetXmlFromUrl, XmlMetadata, Urls}
 
-
   setup_all do
-
     {:ok, []}
   end
 
@@ -30,6 +28,4 @@ defmodule MsLegisTest do
 
     assert Enum.count(list) == 122
   end
-
-
 end

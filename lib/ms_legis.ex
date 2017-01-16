@@ -1,81 +1,6 @@
 defmodule MsLegis do
   import SweetXml
-
-  defmodule XmlMetadata do
-    @list   ~s(<?xml version="1.0" encoding="ISO-8859-1"?><?xml-stylesheet type="text/xsl" href="dtds_xslts/memberlist.xslt"?> <!DOCTYPE LEGISLATURE SYSTEM "dtds_xslts/memberlist.dtd">)
-    @member ~s(<?xml version="1.0" encoding="ISO-8859-1"?><?xml-stylesheet type="text/xsl" href="../dtds_xslts/house.xslt"?><!DOCTYPE MEMBINFO SYSTEM "../dtds_xslts/membinfo.dtd">)
-
-    def list, do: @list
-    def member, do: @member
-  end
-
-  defmodule XQuery do
-    @chair_link   "//CHAIR_LINK/text()"
-    @protemp_link "//PROTEMP_LINK/text()"
-    @m1_links     "//MEMBER/M1_LINK/text()"
-    @m2_links     "//MEMBER/M2_LINK/text()"
-    @m3_links     "//MEMBER/M3_LINK/text()"
-    @m4_links     "//MEMBER/M4_LINK/text()"
-    @m5_links     "//MEMBER/M5_LINK/text()"
-
-    def chair_link, do: @chair_link
-    def protemp_link, do: @protemp_link
-    def m1_links, do: @m1_links
-    def m2_links, do: @m2_links
-    def m3_links, do: @m3_links
-    def m4_links, do: @m4_links
-    def m5_links, do: @m5_links
-  end
-
-  defmodule Urls do
-     @base "http://billstatus.ls.state.ms.us/members/"
-     @house "hr_membs.xml"
-     @senate ""
-
-     def house_link, do: @base <> @house
-     def senate_link, do: @base <> @senate
-     def base_link, do: @base
-  end
-
-  defmodule CleanXml do
-    def apply(text, metadata) do
-      text
-      |> remove_whitespace
-      |> String.replace(metadata, "")
-    end
-
-    def remove_whitespace(text) do
-      text
-      |> String.replace("\r", "")
-      |> String.replace("\n", "")
-      |> String.replace("\t", "")
-    end
-
-    def remove_bad_quotes(text) do
-      text
-      |> String.replace(<<147>>, "")
-      |> String.replace(<<148>>, "")
-    end
-  end
-
-  defmodule GetXQueryResult do
-    import SweetXml
-
-    def get_text(xml, query) do
-      xml |> xpath(sigil_x(query, 's'))
-    end
-
-    def get_list(xml, query) do
-      xml |> xpath(sigil_x(query, 'sl'))
-    end
-  end
-
-  defmodule GetXmlFromUrl do
-    def apply(url) do
-      response = HTTPotion.get(url)
-      response.body
-    end
-  end
+  alias MsLegis.{CleanXml, GetXmlFromUrl, GetXQueryResult, Urls, XmlMetadata, XQuery}
 
   def run do
     IO.puts "--- Started ---"
@@ -110,6 +35,8 @@ defmodule MsLegis do
     thumbnail =   xml |> SweetXml.xpath(~x"//IMG_NAME/text()"s)
     party =       xml |> SweetXml.xpath(~x"//PARTY/text()"s)
     email =       xml |> SweetXml.xpath(~x"//EMAIL_ADDRESS/text()"s)
+
+    IO.puts "#{district} | #{name} | #{party}"
   end
 
   def create_list(xml) do
