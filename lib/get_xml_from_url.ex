@@ -1,4 +1,6 @@
 defmodule MsLegis.GetXQueryResult do
+  @behaviour MsLegis.XQueryResultParser
+
   import SweetXml
 
   def get_text(xml, query) do

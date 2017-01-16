@@ -1,5 +1,5 @@
 defmodule MsLegis do
-  @@moduledoc """
+  @moduledoc """
   Processes member roster xml from MS Legislature
   """
 
