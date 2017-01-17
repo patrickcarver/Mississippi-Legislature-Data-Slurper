@@ -1,13 +1,6 @@
-defmodule MsLegis.GetXQueryResult do
-  @behaviour MsLegis.XQueryResultParser
-
-  import SweetXml
-
-  def get_text(xml, query) do
-    xml |> xpath(sigil_x(query, 's'))
-  end
-
-  def get_list(xml, query) do
-    xml |> xpath(sigil_x(query, 'sl'))
+defmodule MsLegis.GetXmlFromUrl do
+  def apply(url) do
+    response = HTTPotion.get(url)
+    response.body
   end
 end
