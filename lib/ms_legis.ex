@@ -52,7 +52,7 @@ defmodule MsLegis do
     party =       xml |> SweetXml.xpath(~x"//PARTY/text()"s)
     email =       xml |> SweetXml.xpath(~x"//EMAIL_ADDRESS/text()"s)
 
-    IO.puts "#{district} | #{name} | #{party}"
+    IO.puts name
   end
 
   @doc """
