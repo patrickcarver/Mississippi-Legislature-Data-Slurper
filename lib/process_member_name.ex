@@ -20,12 +20,6 @@ defmodule MsLegis.ProcessMemberName do
   def get_suffix(name) do
     suffixes = ["II", "III", "IV", "V", "Jr", "Sr"]
     find_ending = fn(suffix) -> String.ends_with?(name, " " <> suffix) end
-    result = Enum.find(suffixes, find_ending)
-
-    if result == nil do
-      ""
-    else
-      result
-    end
+    result = to_string(Enum.find(suffixes, find_ending))
   end
 end
