@@ -1,8 +1,11 @@
 defmodule MsLegis.ProcessMemberName do
+  @suffixes ["II", "III", "IV", "V", "Jr", "Sr"]
+
   def apply(name) do
     name
     |> remove_punctuation
-    |> String.split(" ")
+    |> String.split(" ", trim: true)
+    |> get_struct
   end
 
   def remove_commas(name) do
@@ -17,9 +20,12 @@ defmodule MsLegis.ProcessMemberName do
     name |> remove_commas |> remove_periods
   end
 
-  def get_suffix(name) do
-    suffixes = ["II", "III", "IV", "V", "Jr", "Sr"]
-    find_ending = fn(suffix) -> String.ends_with?(name, " " <> suffix) end
-    result = to_string(Enum.find(suffixes, find_ending))
+  def is_suffix(value) do
+    value in @suffixes
+  end
+
+  def get_struct(name) do
+    # is last in suffixes?
+    
   end
 end

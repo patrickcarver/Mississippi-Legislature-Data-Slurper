@@ -2,7 +2,14 @@ defmodule MsLegisTest do
   use ExUnit.Case
   doctest MsLegis
 
-  alias MsLegis.{ CleanXml, GetXmlFromUrl, ProcessMemberName, XmlMetadata, Urls }
+  alias MsLegis.{
+    CleanXml,
+    GetXmlFromUrl,
+    MemberName,
+    ProcessMemberName,
+    XmlMetadata,
+    Urls
+  }
 
   setup_all do
     {:ok, []}
@@ -36,24 +43,21 @@ defmodule MsLegisTest do
     assert cleaned == "Willie J Perkins Sr"
   end
 
-  test "get suffix from Willie J. Perkins, Sr." do
-    assert ProcessMemberName.get_suffix("Willie J Perkins Sr") == "Sr"
+  test "is Sr suffix?" do
+    assert ProcessMemberName.is_suffix?("Sr")
   end
 
-  test "get suffix from Sam C. Mims, V" do
-    assert ProcessMemberName.get_suffix("Sam C Mims V") == "V"
+  test "is V suffix?" do
+    assert ProcessMemberName.is_suffix?("V")
   end
 
-  test "get suffix from Henry Zuber III" do
-    assert ProcessMemberName.get_suffix("Henry Zuber III") == "III"
+  test "is III suffix?" do
+    assert ProcessMemberName.is_suffix?("III")
   end
 
-  test "get suffix from Mark Tullos" do
-    assert ProcessMemberName.get_suffix("Mark Tullos") == ""
+  test "is Tullos suffix?" do
+    refute ProcessMemberName.is_suffix?("Tullos")
   end
 
-  test "get suffix from Edward Blackmon, Jr." do
-    assert ProcessMemberName.get_suffix("Edward Blackmon Jr") == "Jr"
-  end
 
 end
