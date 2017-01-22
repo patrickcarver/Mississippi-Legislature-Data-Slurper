@@ -1,4 +1,6 @@
 defmodule MsLegis.ProcessMemberName do
+  alias MsLegis.MemberName
+
   @suffixes ["II", "III", "IV", "V", "Jr", "Sr"]
 
   def apply(name) do
@@ -25,28 +27,32 @@ defmodule MsLegis.ProcessMemberName do
   end
 
   def get_suffix(value) do
-    if is_suffix?(name.last) do
-      name.last
+    if is_suffix?(value) do
+      value
     else
       ""
     end
   end
 
+  def get_last_name(name, suffix) do
+    if suffix == "" do
+      List.last(name)
+    else
+      Enum.at(name, -2)
+    end
+  end
+
   def get_struct(name) do
-    first_name = name.first
+
+    first_name = List.first(name)
     middle_name = ""
     nick_name = ""
     last_name = ""
 
-    suffix = get_suffix(name.last)
+    suffix = get_suffix(List.last(name))
+    last_name = get_last_name(name, suffix)
 
-    if suffix = "" do
-      last_name = name.last
-    end
-
-
-
-    %MemberName.new({
+    MemberName.new(%{
       first_name: first_name,
       middle_name: middle_name,
       nick_name: nick_name,
