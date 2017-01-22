@@ -34,12 +34,13 @@ defmodule MsLegis.ProcessMemberName do
     end
   end
 
+
+  def get_last_name(name, "") do
+    List.last(name)
+  end
+
   def get_last_name(name, suffix) do
-    if suffix == "" do
-      List.last(name)
-    else
-      Enum.at(name, -2)
-    end
+    Enum.at(name, -2)
   end
 
   def get_struct(name) do

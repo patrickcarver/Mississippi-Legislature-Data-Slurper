@@ -4,7 +4,14 @@ defmodule MsLegis do
   """
 
   import SweetXml
-  alias MsLegis.{CleanXml, GetXmlFromUrl, GetXQueryResult, Urls, XmlMetadata, XQuery}
+  alias MsLegis.{
+    CleanXml,
+    GetXmlFromUrl,
+    GetXQueryResult,
+    Urls,
+    XmlMetadata,
+    XQuery
+  }
 
   @doc """
   Main function
