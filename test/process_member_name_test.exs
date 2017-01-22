@@ -2,9 +2,12 @@ defmodule ProcessMemberNameTest do
   use ExUnit.Case
 
   alias MsLegis.{
-    MemberName,
     ProcessMemberName
   }
+
+  setup_all do
+    {:ok, [perkins_struct: ProcessMemberName.apply("Willie J. Perkins, Sr.")]}
+  end
 
   test "remove punctuation from Willie J. Perkins, Sr." do
     original = "Willie J. Perkins, Sr."
@@ -29,19 +32,16 @@ defmodule ProcessMemberNameTest do
     refute ProcessMemberName.is_suffix?("Tullos")
   end
 
-  test "create MemberName struct for Willie J. Perkins, Sr., get first name" do
-    member_struct = ProcessMemberName.apply("Willie J. Perkins, Sr.")
-    assert member_struct.first_name == "Willie"
+  test "create struct for Willie J. Perkins, Sr., get first name", context do
+    assert context[:perkins_struct].first_name == "Willie"
   end
 
-  test "create MemberName struct for Willie J. Perkins, Sr., get last name" do
-    member_struct = ProcessMemberName.apply("Willie J. Perkins, Sr.")
-    assert member_struct.last_name == "Perkins"
+  test "create struct for Willie J. Perkins, Sr., get last name", context do
+    assert context[:perkins_struct].last_name == "Perkins"
   end
 
-  test "create MemberName struct for Willie J. Perkins, Sr., get suffix" do
-    member_struct = ProcessMemberName.apply("Willie J. Perkins, Sr.")
-    assert member_struct.suffix == "Sr"
+  test "create MemberName struct for Willie J. Perkins, Sr., get suffix", context do
+    assert context[:perkins_struct].suffix == "Sr"
   end
 
   test "create MemberName struct for Mark Tullos, get last name" do
