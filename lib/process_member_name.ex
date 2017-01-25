@@ -34,6 +34,9 @@ defmodule MsLegis.ProcessMemberName do
     end
   end
 
+  def get_nick_name(name) do
+
+  end
 
   def get_last_name(name, "") do
     List.last(name)
@@ -43,6 +46,8 @@ defmodule MsLegis.ProcessMemberName do
     Enum.at(name, -2)
   end
 
+  def get_last_name(name, )
+
   def get_struct(name) do
 
     first_name = List.first(name)
@@ -50,8 +55,12 @@ defmodule MsLegis.ProcessMemberName do
     nick_name = ""
     last_name = ""
 
-    suffix = get_suffix(List.last(name))
-    last_name = get_last_name(name, suffix)
+    if Enum.count(name) == 2 do
+      last_name = List.last(name)
+    else
+      suffix =    get_suffix(List.last(name))
+      last_name = get_last_name(name, suffix)
+    end
 
     MemberName.new(%{
       first_name: first_name,
